@@ -108,3 +108,29 @@ The following documentation will be added alongside implementation:
 - `ASSET_SOURCES.md`: asset sources and license information.
 - Test and performance reports, including environment details and limitations.
 - Public deployment URL and clean-checkout verification.
+
+## Gameplay configuration
+
+Balance parameters are defined in `src/config/gameConfig.ts`.
+
+- Default session duration: 120 seconds.
+- Allowed session duration: 60–180 seconds.
+- Default enemy spawn interval: 4 seconds.
+- Allowed spawn interval: 1–15 seconds.
+- Logical arena size: 960 × 600.
+- Initial player health: 100.
+
+Time values use seconds. Movement speeds use logical units per second.
+Rotation speeds use radians per second. Distances use logical arena units.
+
+The spawn interval limits are an initial balance decision, subject to
+playtesting and performance validation.
+
+`makeConfig` creates a separate configuration object for each match.
+`configKey` serializes all configuration values for ranking comparisons.
+Integration with gameplay and ranking is pending.
+
+## Assets
+
+Game images are stored in `public/assets/`.
+See [ASSET_SOURCES.md](ASSET_SOURCES.md) for provenance and license notes.
