@@ -165,3 +165,20 @@ Keyboard and touch event listeners will be connected during
 game integration.
 
 Gameplay behavior still requires automated tests and playtesting.
+
+## Simulation tests
+
+Run the simulation checks with:
+
+```bash
+npm test -- tests/simulation.spec.ts --project=desktop
+```
+
+The four tests cover configuration isolation, paused simulation,
+projectile lifetime and lethal Chaser collision without scoring,
+including prevention of updates after match completion.
+
+These tests run directly against the simulation, without a browser.
+They complement the upcoming browser E2E tests.
+
+Latest local execution: 4 tests passed.
