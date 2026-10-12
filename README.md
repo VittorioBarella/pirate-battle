@@ -1,75 +1,110 @@
-# React + TypeScript + Vite
+# Pirate Battle
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A single-player, top-down naval shooter built with React, TypeScript and PixiJS.
 
-Currently, two official plugins are available:
+## Current status
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+Initial project setup. The application currently displays the Vite starter screen.
+Gameplay, API integration and complete test coverage are under development.
 
-## React Compiler
+## Technology stack
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- React and TypeScript: interface and application code.
+- Vite: development server and production build.
+- PixiJS: planned game rendering.
+- Axios and TanStack Query: planned ranking and match history integration.
+- MSW: planned REST API simulation.
+- Playwright: browser testing.
+- ESLint: static code analysis.
 
-## Expanding the ESLint configuration
+## Setup
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+The initial setup was run with Node.js 20.19.6 and npm 10.8.2.
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+git clone https://github.com/VittorioBarella/pirate-battle.git
+cd pirate-battle
+npm ci
+npx playwright install chromium
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+## Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-
+```bash
+npm run dev
 ```
+
+Open the local URL printed in the terminal.
+
+No environment variables or private services are required for the current setup.
+
+## Build and preview
+
+```bash
+npm run build
+npm run preview
+```
+
+## Code quality
+
+```bash
+npm run lint
+```
+
+The build command also runs the TypeScript checks configured by the starter.
+
+## Automated tests
+
+```bash
+npm test
+```
+
+Playwright starts a dedicated development server at http://127.0.0.1:5174.
+
+The configuration includes:
+
+- Chromium with a desktop viewport.
+- Chromium with Pixel 7 emulation.
+- HTML reports.
+- Screenshots and traces retained on failure.
+
+Mobile emulation does not replace testing on a physical device.
+
+The initial smoke test checks the starter counter. Gameplay tests and visual
+regression coverage will be added during implementation.
+
+### View the latest report
+
+```bash
+npm run test:report
+```
+
+### Update visual baselines
+
+Once screenshot assertions are implemented, review intentional visual changes
+and update their baselines with:
+
+```bash
+npm run test:update
+```
+
+### Generated output
+
+- `playwright-report/`: local HTML report.
+- `test-results/`: temporary test output, including failure artifacts.
+- `reports/`: reserved for delivery evidence and profiling results.
+
+Local test output is ignored by Git. Final delivery evidence will be preserved
+separately. Test results and performance measurements have not yet been recorded.
+
+## Documentation roadmap
+
+The following documentation will be added alongside implementation:
+
+- Controls, gameplay configuration and supported mobile orientation.
+- Network scenarios, reset instructions and failure reproduction.
+- `ARCHITECTURE.md`: simulation, rendering, input, collisions, resource cleanup,
+  persistence, API contracts, cache and pending submission recovery.
+- `ASSET_SOURCES.md`: asset sources and license information.
+- Test and performance reports, including environment details and limitations.
+- Public deployment URL and clean-checkout verification.
