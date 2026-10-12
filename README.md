@@ -4,8 +4,15 @@ A single-player, top-down naval shooter built with React, TypeScript and PixiJS.
 
 ## Current status
 
-Initial project setup. The application currently displays the Vite starter screen.
-Gameplay, API integration and complete test coverage are under development.
+Project setup, game assets, typed gameplay configuration, input
+state and the first gameplay simulation are implemented.
+
+The simulation includes movement, weapons, enemy spawning,
+Chaser and Shooter behavior, collisions, scoring and match completion.
+
+The application still displays the Vite starter screen.
+PixiJS rendering, React integration, API integration and gameplay
+tests are pending. Build and lint checks pass.
 
 ## Technology stack
 
@@ -94,8 +101,10 @@ npm run test:update
 - `test-results/`: temporary test output, including failure artifacts.
 - `reports/`: reserved for delivery evidence and profiling results.
 
-Local test output is ignored by Git. Final delivery evidence will be preserved
-separately. Test results and performance measurements have not yet been recorded.
+Local test output is ignored by Git. Final delivery evidence will be
+preserved separately. The initial starter smoke test passed in desktop
+and mobile emulation. Gameplay test reports and performance measurements
+are pending.
 
 ## Documentation roadmap
 
@@ -105,7 +114,6 @@ The following documentation will be added alongside implementation:
 - Network scenarios, reset instructions and failure reproduction.
 - `ARCHITECTURE.md`: simulation, rendering, input, collisions, resource cleanup,
   persistence, API contracts, cache and pending submission recovery.
-- `ASSET_SOURCES.md`: asset sources and license information.
 - Test and performance reports, including environment details and limitations.
 - Public deployment URL and clean-checkout verification.
 
@@ -128,9 +136,32 @@ playtesting and performance validation.
 
 `makeConfig` creates a separate configuration object for each match.
 `configKey` serializes all configuration values for ranking comparisons.
-Integration with gameplay and ranking is pending.
+The simulation uses this configuration. Integration with the
+playable interface and ranking is pending.
 
 ## Assets
 
 Game images are stored in `public/assets/`.
 See [ASSET_SOURCES.md](ASSET_SOURCES.md) for provenance and license notes.
+
+## Game simulation
+
+Gameplay rules live in `src/game/simulation.ts`, independently
+of React and PixiJS.
+
+- `move()`: ship movement, arena bounds and island collision checks.
+- `spawn()`: enemy creation and safe spawn placement.
+- `fire()`: projectile creation for frontal and lateral attacks.
+- `segmentHit()`: projectile segment collision checks.
+- `update(dt)`: movement, cooldowns, spawning, enemy behavior,
+  damage, scoring, cleanup and match completion.
+- `snapshot()`: a copy of selected simulation state for inspection.
+
+Time is supplied to `update(dt)` in seconds. Paused or completed
+matches do not advance through this method.
+
+Input state and keyboard mappings live in `src/game/input.ts`.
+Keyboard and touch event listeners will be connected during
+game integration.
+
+Gameplay behavior still requires automated tests and playtesting.
