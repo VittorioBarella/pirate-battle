@@ -94,6 +94,14 @@ npm run lint
 The build command also runs the TypeScript checks configured by the starter.
 
 ## Automated tests
+The options and pause suite covers saving and restoring options,
+rejecting empty and out-of-range values, cancelling changes,
+and freezing the game timer during manual and focus-loss pauses.
+
+Latest local execution on October 13, 2026:
+8 tests passed across desktop Chromium and Pixel 7 emulation.
+Production build passed. ESLint reported no errors and one warning
+in the generated MSW service worker.
 
 ```bash
 npm test
