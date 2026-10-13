@@ -4,15 +4,28 @@ A single-player, top-down naval shooter built with React, TypeScript and PixiJS.
 
 ## Current status
 
-Project setup, game assets, typed gameplay configuration, input
-state and the first gameplay simulation are implemented.
+The playable battle is integrated with React and PixiJS. It includes
+ship movement, frontal and lateral attacks, Chaser and Shooter enemies,
+collisions, health, scoring and match completion.
 
-The simulation includes movement, weapons, enemy spawning,
-Chaser and Shooter behavior, collisions, scoring and match completion.
+Keyboard and touch controls, manual pause, automatic pause on focus
+loss, the result screen and restart are implemented. The game has
+been launched and played locally.
 
-The application still displays the Vite starter screen.
-PixiJS rendering, React integration, API integration and gameplay
-tests are pending. Build and lint checks pass.
+The menu layout and Options screen have been implemented and are
+awaiting validation. Options include session duration (60–180 seconds)
+and enemy spawn interval (1–15 seconds), saved in browser local
+storage. Each match receives a separate configuration snapshot.
+
+MSW and the TanStack Query provider are initialized. Typed API
+contracts, Axios transport and mock handlers are implemented.
+Ranking, history, match submission and pending-send recovery
+are not yet connected to the interface.
+
+Build and lint passed before the latest menu and Options changes.
+Initial simulation tests passed. Validation of the latest changes,
+full gameplay tests, visual regression checks, performance
+measurements and public deployment are pending.
 
 ## Technology stack
 
