@@ -111,6 +111,13 @@ retry while unavailable and recovery after a clean reload.
 Latest local execution on October 13, 2026:
 10 tests passed across desktop Chromium and Pixel 7 emulation.
 
+The API recovery suite covers offline submission persistence across reload,
+manual retry without duplication, recovery after an ambiguous timeout,
+and ranking error recovery through Retry.
+
+Latest local execution on October 13, 2026:
+6 tests passed across desktop Chromium and Pixel 7 emulation.
+
 ```bash
 npm test
 ```
