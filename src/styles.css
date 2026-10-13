@@ -265,11 +265,14 @@ small,
   margin: 12px 0;
 }
 .table-wrap {
-  overflow: auto;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
 }
 table {
   border-collapse: collapse;
   width: 100%;
+  min-width: 620px;
   font-size: 13px;
   text-align: left;
 }
@@ -279,10 +282,12 @@ th {
   text-transform: uppercase;
   letter-spacing: 0.08em;
   padding: 13px 10px;
+  white-space: nowrap;
 }
 td {
   padding: 13px 10px;
   border-top: 1px solid #2b4852;
+  white-space: nowrap;
 }
 .pagination {
   display: flex;
