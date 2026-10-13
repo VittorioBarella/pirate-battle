@@ -31,8 +31,14 @@ and visual regression.
 The complete suite passed 66 tests, with two desktop touch tests
 intentionally skipped. Performance measurements have also been recorded.
 
-Remaining delivery work includes mobile orientation validation, final
-documentation review, public deployment and clean-checkout verification.
+Installation, the normal production build and the complete test suite
+were verified in a fresh clone of the GitHub repository.
+
+Portrait and landscape layouts were manually checked in Pixel 7
+browser emulation.
+
+Remaining delivery work includes public deployment, physical-device
+validation and the final documentation update with the public URL.
 
 Browser persistence assumes available local storage and a single active
 application tab. The mock API is browser-local, not a shared backend.
@@ -82,8 +88,9 @@ npm run preview
 The build command runs TypeScript checks and creates the production output
 in `dist/`.
 
-The latest confirmed production build passed. Vite reported a warning
-about a JavaScript chunk exceeding 500 kB after minification.
+The latest confirmed normal production build passed in a clean checkout.
+Vite reported a warning about a JavaScript chunk exceeding 500 kB after
+minification.
 
 Runtime profiling results are documented in the Performance profiling
 section. Initial loading performance has not been measured separately.
@@ -100,9 +107,11 @@ TypeScript checks can also be run separately:
 npx tsc -b
 ```
 
-The latest confirmed lint execution reported zero errors and two unused
-`eslint-disable` warnings in `public/mockServiceWorker.js` and its
-generated copy in `.profile-dist/mockServiceWorker.js`.
+The clean-checkout lint execution reported zero errors and one unused
+`eslint-disable` warning in the generated `public/mockServiceWorker.js`.
+
+When `.profile-dist/` is present, its generated worker copy also produces
+the same warning.
 
 ## Controls
 
@@ -124,8 +133,16 @@ Resume explicitly through the pause dialog.
 Abandoning a battle returns to the menu without submitting a result.
 Reloading during combat abandons the active simulation.
 
-Mobile orientation and physical-device validation are still pending.
-Pixel 7 emulation does not replace testing on a physical device.
+Portrait (412 × 915) and landscape (915 × 412) layouts were manually
+checked in Chrome's Pixel 7 emulation on October 13, 2026.
+Controls remained accessible, and the paused timer remained unchanged
+during the manual waiting check.
+
+In landscape, the controls overlap a narrow strip at the bottom
+of the arena.
+
+Physical-device validation is pending. Browser emulation does not
+replace testing on a physical device.
 
 ## Gameplay configuration
 
@@ -266,16 +283,17 @@ Results recorded locally on October 13, 2026:
 | `touch.spec.ts` | Simultaneous movement/fire, touch release, cancellation and independent keyboard input | 2 passed in the mobile project |
 | `collisions.spec.ts` | Island projectile blocking and single-target swept collision | 4 passed (2 checks repeated in both projects) |
 
-The complete suite execution on October 13, 2026, passed 66 tests
-in 3.2 minutes. Two touch tests were intentionally skipped in the
-desktop project and passed in the mobile project.
+The preserved complete suite execution passed 66 tests in 3.2 minutes.
+A subsequent execution in a clean checkout passed 66 tests in 3.1 minutes.
+
+Two touch tests were intentionally skipped in the desktop project
+and passed in the mobile project.
 
 The normal production build passed with test and profiling modes
 disabled. Vite reported a chunk-size warning.
 
-ESLint reported zero errors and two unused `eslint-disable` warnings:
-one in the original MSW worker and one in its generated profiling
-build copy.
+The clean-checkout lint execution reported zero errors and one warning
+in the generated MSW worker.
 
 ### Run individual suites
 
@@ -297,6 +315,12 @@ without requesting a browser page. They complement browser E2E tests.
 
 ```bash
 npx playwright show-report playwright-report
+```
+
+The preserved delivery report can be opened with:
+
+```bash
+npx playwright show-report reports/playwright-final
 ```
 
 ### Visual baselines
@@ -332,7 +356,8 @@ Latest local execution on October 13, 2026: 6 tests passed.
 - `reports/`: profiling results and preserved delivery evidence.
 
 Generated local build and test output is ignored by Git.
-Delivery evidence will be preserved separately.
+The profiling JSON and preserved delivery report are versioned
+under `reports/`.
 
 ## Game simulation
 
@@ -363,16 +388,26 @@ See [ASSET_SOURCES.md](ASSET_SOURCES.md) for provenance and license notes.
 
 ## Documentation and delivery
 
-`ARCHITECTURE.md` has been drafted and requires a final review against
-the implemented code.
+`ARCHITECTURE.md` documents component responsibilities, simulation timing,
+rendering lifecycle, input, collisions, API consistency, persistence
+and profiling limitations.
+
+Clean-checkout validation completed on October 13, 2026:
+
+- `npm ci` completed successfully.
+- The normal production build passed.
+- ESLint reported zero errors and one warning in the generated MSW worker.
+- The complete suite passed 66 tests in 3.1 minutes, with two intentional
+  desktop touch skips.
+- The generated worker's normalized content matched the committed file.
+  Restoring that file cleared its Git modification marker.
+- The working tree was clean after validation.
 
 Remaining documentation and delivery tasks:
 
-- Confirm supported mobile orientation and device limitations.
-- Review architecture, cleanup, cache and persistence documentation.
-- Preserve final test and profiling evidence.
+- Validate the published game on a physical device and record limitations.
 - Publish the game and add its public URL.
-- Verify setup, build and tests from a clean checkout.
+- Update the final delivery status.
 
 ## Performance profiling
 
