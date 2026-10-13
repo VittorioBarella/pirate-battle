@@ -103,6 +103,14 @@ Latest local execution on October 13, 2026:
 Production build passed. ESLint reported no errors and one warning
 in the generated MSW service worker.
 
+The combat suite covers movement, rotation, arena and island boundaries,
+front cannon cooldowns, parallel broadsides, enemy damage, scoring,
+player death and restart. It also checks asset failure feedback,
+retry while unavailable and recovery after a clean reload.
+
+Latest local execution on October 13, 2026:
+10 tests passed across desktop Chromium and Pixel 7 emulation.
+
 ```bash
 npm test
 ```
