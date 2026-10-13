@@ -24,12 +24,15 @@ Implemented features include:
 - Asset loading failure feedback and retry.
 
 Automated checks cover options, pause, movement, combat, enemy spawning,
-Shooter damage, match lifecycle, asset failures, ranking pagination and
-submission recovery.
+Shooter damage, match lifecycle, asset failures, ranking pagination,
+submission recovery, simultaneous touch input, projectile collisions
+and visual regression.
 
-Remaining delivery work includes broader touch and API scenario coverage,
-visual regression baselines, performance measurements, final documentation
-review, public deployment and clean-checkout verification.
+The complete suite passed 66 tests, with two desktop touch tests
+intentionally skipped. Performance measurements have also been recorded.
+
+Remaining delivery work includes mobile orientation validation, final
+documentation review, public deployment and clean-checkout verification.
 
 Browser persistence assumes available local storage and a single active
 application tab. The mock API is browser-local, not a shared backend.
@@ -81,7 +84,9 @@ in `dist/`.
 
 The latest confirmed production build passed. Vite reported a warning
 about a JavaScript chunk exceeding 500 kB after minification.
-Loading and runtime performance measurements are still pending.
+
+Runtime profiling results are documented in the Performance profiling
+section. Initial loading performance has not been measured separately.
 
 ## Code quality
 
@@ -95,8 +100,9 @@ TypeScript checks can also be run separately:
 npx tsc -b
 ```
 
-The latest confirmed lint execution reported zero errors and one unused
-`eslint-disable` warning in the generated `public/mockServiceWorker.js`.
+The latest confirmed lint execution reported zero errors and two unused
+`eslint-disable` warnings in `public/mockServiceWorker.js` and its
+generated copy in `.profile-dist/mockServiceWorker.js`.
 
 ## Controls
 
@@ -143,7 +149,7 @@ The simulation also copies its configuration.
 key to compare matches played with the same gameplay configuration.
 
 The spawn interval limits are a balance decision subject to further
-playtesting and performance validation.
+playtesting.
 
 ## Match persistence and API
 
@@ -255,17 +261,21 @@ Results recorded locally on October 13, 2026:
 | `options-pause.spec.ts` | Save, reload, validation, cancellation and manual/focus-loss pause | 8 passed |
 | `combat.spec.ts` | Movement, weapons, damage, scoring, enemies, assets and match lifecycle | 16 passed |
 | `api-recovery.spec.ts` | Submission recovery, ranking/history updates, configuration separation, interrupted requests and multiple pending matches | 14 passed |
-| `simulation.spec.ts` | Configuration isolation, pause, projectile lifetime and lethal Chaser contact |8 passed 4 checks repeated in both projects|
+| `simulation.spec.ts` | Configuration isolation, pause, projectile lifetime and lethal Chaser contact | 8 passed (4 checks repeated in both projects) |
 | `visual.spec.ts` | Menu, initial arena and completed result screenshots | 6 passed |
 | `touch.spec.ts` | Simultaneous movement/fire, touch release, cancellation and independent keyboard input | 2 passed in the mobile project |
 | `collisions.spec.ts` | Island projectile blocking and single-target swept collision | 4 passed (2 checks repeated in both projects) |
 
-Latest complete validation on October 13, 2026:
-46 tests passed in 2.2 minutes. Production build passed.
-ESLint reported zero errors and one warning in the generated MSW worker.
+The complete suite execution on October 13, 2026, passed 66 tests
+in 3.2 minutes. Two touch tests were intentionally skipped in the
+desktop project and passed in the mobile project.
 
-Further checks are pending for simultaneous touch input, additional
-collision and API consistency cases, and visual regression.
+The normal production build passed with test and profiling modes
+disabled. Vite reported a chunk-size warning.
+
+ESLint reported zero errors and two unused `eslint-disable` warnings:
+one in the original MSW worker and one in its generated profiling
+build copy.
 
 ### Run individual suites
 
@@ -275,10 +285,13 @@ npm test -- tests/options-pause.spec.ts
 npm test -- tests/combat.spec.ts
 npm test -- tests/api-recovery.spec.ts
 npm test -- tests/simulation.spec.ts --project=desktop
+npm test -- tests/visual.spec.ts
+npm test -- tests/touch.spec.ts --project=mobile
+npm test -- tests/collisions.spec.ts --project=desktop
 ```
 
-Simulation checks run directly against TypeScript rules without requesting
-a browser page. They complement browser E2E tests.
+Simulation and collision checks run directly against TypeScript rules
+without requesting a browser page. They complement browser E2E tests.
 
 ### View the latest report
 
@@ -316,7 +329,7 @@ Latest local execution on October 13, 2026: 6 tests passed.
 - `dist/`: production build output.
 - `playwright-report/`: latest local HTML report.
 - `test-results/`: temporary test output and failure artifacts.
-- `reports/`: reserved for delivery evidence and profiling results.
+- `reports/`: profiling results and preserved delivery evidence.
 
 Generated local build and test output is ignored by Git.
 Delivery evidence will be preserved separately.
@@ -357,7 +370,71 @@ Remaining documentation and delivery tasks:
 
 - Confirm supported mobile orientation and device limitations.
 - Review architecture, cleanup, cache and persistence documentation.
-- Record performance measurements and environment details.
 - Preserve final test and profiling evidence.
 - Publish the game and add its public URL.
 - Verify setup, build and tests from a clean checkout.
+
+## Performance profiling
+
+An optimized profiling build was measured locally on October 13, 2026.
+
+Environment:
+
+- Windows x64.
+- Intel Core i7-11800H, 16 logical CPUs.
+- 15.73 GiB system memory.
+- Chromium 156.0.8078.4.
+- Viewport: 1280 × 900; device pixel ratio approximately 1.
+
+The session used a 180-second duration, four-second enemy spawn
+interval and held movement, rotation and all weapon inputs.
+
+The profiling configuration increases player health to 10,000
+to allow the complete session to finish. Normal builds use 100 HP.
+Movement, combat and enemy behavior remain unchanged.
+
+Results:
+
+- Active session duration: 180 seconds.
+- Wall duration until completion detection: 180.15 seconds.
+- Retained ticker samples: 20,000.
+- Average ticker frequency: 165.04 Hz.
+- Frame interval p95: 6.2 ms.
+- Maximum entities in the retained samples: 27.
+- JavaScript page errors: none.
+
+After the full session and five short restart cycles, post-GC
+JavaScript heap usage increased from 8,299,248 to 8,664,384 bytes
+(365,136 bytes, approximately 4.4%). No canvas elements remained
+after any measured cleanup.
+
+The observed heap growth requires further investigation before
+claiming leak-free behavior. Five cycles are a limited check.
+
+Ticker intervals do not measure GPU execution time. Only the latest
+20,000 samples are retained. Heap measurements exclude total browser
+and GPU memory. Completion detection uses approximately one-second
+polling precision.
+
+The machine-readable report is stored in
+`reports/profile-stress.json`.
+
+To reproduce in Git Bash:
+
+```bash
+VITE_TEST_MODE=false VITE_PROFILE_MODE=true npm run profile:build
+npm run profile:preview
+```
+
+Keep the preview server running. In another terminal:
+
+```bash
+node scripts/profile.mjs
+```
+
+Keep the automated browser in the foreground until completion.
+Each execution replaces the report.
+
+The temporary `.profile-dist/` directory is ignored by Git.
+Production deployment must use the normal build with profiling
+and test modes disabled.

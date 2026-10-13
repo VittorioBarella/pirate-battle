@@ -58,7 +58,7 @@ export const makeConfig = (options: Options): GameConfig => ({
   ...options,
   arena: { width: 960, height: 600 },
   player: {
-    health: 100,
+    health: import.meta.env?.VITE_PROFILE_MODE === "true" ? 10_000 : 100,
     speed: 185,
     rotation: 2.7,
     radius: 21,

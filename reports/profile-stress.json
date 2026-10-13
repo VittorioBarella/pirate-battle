@@ -1,0 +1,125 @@
+{
+  "recordedAt": "2026-10-13T14:34:38.032Z",
+  "environment": {
+    "platform": "win32",
+    "architecture": "x64",
+    "cpu": "11th Gen Intel(R) Core(TM) i7-11800H @ 2.30GHz",
+    "logicalCpuCount": 16,
+    "systemMemoryGiB": 15.73,
+    "browser": "156.0.8078.4",
+    "viewport": {
+      "width": 1280,
+      "height": 900
+    },
+    "devicePixelRatio": 1.0000000149011612,
+    "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.0.0 Safari/537.36"
+  },
+  "match": {
+    "id": "43ecf2b9-94ae-4f0d-9d19-97d7aa7ad2d2",
+    "playerId": "local-captain",
+    "playerName": "Captain",
+    "date": "2026-10-13T14:34:21.742Z",
+    "score": 23,
+    "duration": 180,
+    "reason": "time",
+    "config": {
+      "sessionTime": 180,
+      "spawnTime": 4,
+      "arena": {
+        "width": 960,
+        "height": 600
+      },
+      "player": {
+        "health": 10000,
+        "speed": 185,
+        "rotation": 2.7,
+        "radius": 21
+      },
+      "front": {
+        "damage": 25,
+        "cooldown": 0.42,
+        "speed": 390,
+        "lifetime": 1.6
+      },
+      "side": {
+        "damage": 20,
+        "cooldown": 1.15,
+        "speed": 350,
+        "lifetime": 1.4
+      },
+      "chaser": {
+        "health": 45,
+        "speed": 105,
+        "rotation": 2.1,
+        "radius": 20,
+        "damage": 22,
+        "range": 0,
+        "cooldown": 0
+      },
+      "shooter": {
+        "health": 65,
+        "speed": 80,
+        "rotation": 1.8,
+        "radius": 22,
+        "damage": 12,
+        "range": 300,
+        "cooldown": 1.8
+      },
+      "spawn": {
+        "minimumDistance": 260,
+        "shooterRatio": 0.5
+      }
+    }
+  },
+  "performance": {
+    "targetFps": 60,
+    "sampledFrames": 20000,
+    "averageFps": 165.04,
+    "frameIntervalP95Ms": 6.2,
+    "maxEntities": 27,
+    "wallDurationSeconds": 180.15
+  },
+  "memory": [
+    {
+      "label": "after full match",
+      "usedHeapBytes": 8299248,
+      "canvasCount": 0
+    },
+    {
+      "label": "after restart 1",
+      "usedHeapBytes": 8298672,
+      "canvasCount": 0
+    },
+    {
+      "label": "after restart 2",
+      "usedHeapBytes": 8423340,
+      "canvasCount": 0
+    },
+    {
+      "label": "after restart 3",
+      "usedHeapBytes": 8470092,
+      "canvasCount": 0
+    },
+    {
+      "label": "after restart 4",
+      "usedHeapBytes": 8561844,
+      "canvasCount": 0
+    },
+    {
+      "label": "after restart 5",
+      "usedHeapBytes": 8664384,
+      "canvasCount": 0
+    }
+  ],
+  "pageErrors": [],
+  "limitations": [
+    "Profiling configuration uses 10,000 HP instead of the normal 100 HP.",
+    "Keyboard input holds movement, rotation and all weapons.",
+    "Frame samples measure ticker intervals, not GPU execution time.",
+    "Only the latest 20,000 frame and entity samples are retained.",
+    "Wall duration is measured from input setup to completion detection, with approximately one-second polling precision.",
+    "Heap samples cover JavaScript memory, not total browser or GPU memory.",
+    "Shared textures and bounded frame metrics remain cached.",
+    "Five short restart cycles cannot prove the absence of all memory leaks."
+  ]
+}

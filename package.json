@@ -10,7 +10,9 @@
     "preview": "vite preview",
     "test": "playwright test",
     "test:update": "playwright test --update-snapshots",
-    "test:report": "playwright show-report"
+    "test:report": "playwright show-report",
+    "profile:build": "tsc -b && vite build --outDir .profile-dist",
+    "profile:preview": "vite preview --outDir .profile-dist --host 127.0.0.1 --port 4173 --strictPort"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.104.2",
