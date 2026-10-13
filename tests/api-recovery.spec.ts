@@ -205,3 +205,221 @@ test("shows a ranking error and recovers through Retry", async ({ page }) => {
   await expect(table.locator("tbody tr")).toHaveCount(5);
   await expect(alert).toHaveCount(0);
 });
+
+test("updates ranking and history after match registration", async ({ page }) => {
+  await page.goto("/?test");
+
+  await expect(page.getByText("Page 1 of 5 · 24 records", {
+    exact: true,
+  })).toBeVisible();
+
+  await completeBattle(page);
+
+  await expect(page.getByText(
+    "Battle registered successfully.",
+    { exact: true },
+  )).toBeVisible();
+
+  await page.getByRole("button", {
+    name: "Main Menu",
+    exact: true,
+  }).click();
+
+  await expect(page.getByText("Page 1 of 5 · 25 records", {
+    exact: true,
+  })).toBeVisible();
+
+  for (let index = 0; index < 4; index++) {
+    await page.getByRole("button", {
+      name: "Next",
+      exact: true,
+    }).click();
+
+    await expect(page.getByText(
+      `Page ${index + 2} of 5 · 25 records`,
+      { exact: true },
+    )).toBeVisible();
+
+    await expect(page.getByRole("button", {
+      name: "Refresh",
+      exact: true,
+    })).toBeEnabled();
+  }
+
+  const ranking = page.getByRole("table", {
+    name: "Ranking records",
+    exact: true,
+  });
+
+  await expect(ranking.locator("tbody tr")).toHaveCount(5);
+  await expect(ranking.locator("tbody tr").last()).toContainText("Captain");
+
+  await page.getByRole("button", {
+    name: "History",
+    exact: true,
+  }).click();
+
+  const history = page.getByRole("table", {
+    name: "History records",
+    exact: true,
+  });
+
+  await expect(history.locator("tbody tr")).toHaveCount(1);
+  await expect(history.locator("tbody tr")).toContainText("Captain");
+});
+
+test("keeps rankings separate for different gameplay configurations", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  await expect(page.getByRole("table", {
+    name: "Ranking records",
+    exact: true,
+  })).toBeVisible();
+
+  await page.getByRole("button", {
+    name: "Options",
+    exact: true,
+  }).click();
+
+  await page.getByLabel("Session duration (seconds)").fill("90");
+  await page.getByRole("button", { name: "Save Options" }).click();
+
+  await expect(page.getByText(
+    "No scores for this configuration yet.",
+    { exact: true },
+  )).toBeVisible();
+
+  await expect(page.getByRole("table", {
+    name: "Ranking records",
+    exact: true,
+  })).toHaveCount(0);
+
+  await page.getByRole("button", {
+    name: "Options",
+    exact: true,
+  }).click();
+
+  await page.getByLabel("Session duration (seconds)").fill("120");
+  await page.getByRole("button", { name: "Save Options" }).click();
+
+  await expect(page.getByRole("table", {
+    name: "Ranking records",
+    exact: true,
+  })).toBeVisible();
+
+  await expect(page.getByText("Page 1 of 5 · 24 records", {
+    exact: true,
+  })).toBeVisible();
+});
+
+test("keeps history visible when a delayed ranking request is interrupted", async ({
+  page,
+}) => {
+  await page.goto("/");
+
+  await expect(page.getByRole("table", {
+    name: "Ranking records",
+    exact: true,
+  })).toBeVisible();
+
+  await setScenario(page, "slow");
+
+  await page.getByRole("button", {
+    name: "Refresh",
+    exact: true,
+  }).click();
+
+  await expect(page.getByText("Updating records…", {
+    exact: true,
+  })).toBeVisible();
+
+  await page.getByRole("button", {
+    name: "History",
+    exact: true,
+  }).click();
+
+  await expect(page.getByRole("heading", {
+    name: "History",
+    exact: true,
+  })).toBeVisible();
+
+  await expect(page.getByText(
+    "No registered battles on this page yet.",
+    { exact: true },
+  )).toBeVisible();
+
+  // Observe beyond the mock's 1,200 ms delay to detect late UI replacement.
+  await page.waitForTimeout(1_500);
+
+  await expect(page.getByRole("heading", {
+    name: "History",
+    exact: true,
+  })).toBeVisible();
+
+  await expect(page.getByRole("table", {
+    name: "Ranking records",
+    exact: true,
+  })).toHaveCount(0);
+});
+
+test("preserves an earlier pending match while completing another battle", async ({
+  page,
+}) => {
+  await page.goto("/?test");
+  await setScenario(page, "offline");
+  await completeBattle(page);
+
+  const firstIds = await storedIds(page, "pending");
+  expect(firstIds).toHaveLength(1);
+
+  await page.getByRole("button", {
+    name: "Main Menu",
+    exact: true,
+  }).click();
+
+  await completeBattle(page);
+
+  const bothIds = await storedIds(page, "pending");
+  expect(bothIds).toHaveLength(2);
+  expect(bothIds).toContain(firstIds[0]);
+  expect(new Set(bothIds).size).toBe(2);
+
+  const retry = page.getByRole("button", {
+    name: "Retry pending",
+    exact: true,
+  });
+
+  await expect(retry).toBeEnabled({ timeout: 15_000 });
+
+  await setScenario(page, "success");
+  await retry.click();
+
+  await expect.poll(
+    () => storedIds(page, "pending"),
+    { timeout: 15_000 },
+  ).toEqual([]);
+
+  await expect.poll(
+    async () => (await storedIds(page, "confirmed")).sort(),
+    { timeout: 15_000 },
+  ).toEqual([...bothIds].sort());
+
+  await page.getByRole("button", {
+    name: "Main Menu",
+    exact: true,
+  }).click();
+
+  await page.getByRole("button", {
+    name: "History",
+    exact: true,
+  }).click();
+
+  const history = page.getByRole("table", {
+    name: "History records",
+    exact: true,
+  });
+
+  await expect(history.locator("tbody tr")).toHaveCount(2);
+});

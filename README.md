@@ -254,7 +254,7 @@ Results recorded locally on October 13, 2026:
 | `setup.spec.ts` | Menu, canvas startup, ranking pagination and empty history | 8 passed |
 | `options-pause.spec.ts` | Save, reload, validation, cancellation and manual/focus-loss pause | 8 passed |
 | `combat.spec.ts` | Movement, weapons, damage, scoring, enemies, assets and match lifecycle | 16 passed |
-| `api-recovery.spec.ts` | Offline persistence, retry, ambiguous timeout and ranking error recovery | 6 passed |
+| `api-recovery.spec.ts` | Submission recovery, ranking/history updates, configuration separation, interrupted requests and multiple pending matches | 14 passed |
 | `simulation.spec.ts` | Configuration isolation, pause, projectile lifetime and lethal Chaser contact |8 passed 4 checks repeated in both projects|
 | `visual.spec.ts` | Menu, initial arena and completed result screenshots | 6 passed |
 | `touch.spec.ts` | Simultaneous movement/fire, touch release, cancellation and independent keyboard input | 2 passed in the mobile project |
