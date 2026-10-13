@@ -4,57 +4,45 @@ A single-player, top-down naval shooter built with React, TypeScript and PixiJS.
 
 ## Current status
 
-The playable battle is integrated with React and PixiJS. It includes
-ship movement, frontal and lateral attacks, Chaser and Shooter enemies,
-collisions, health, scoring and match completion.
+The game is playable locally. React manages the interface and PixiJS renders
+the arena, ships, projectiles, health bars and combat effects.
 
-Keyboard and touch controls, manual pause, automatic pause on focus
-loss, the result screen and restart are implemented. The game has
-been launched and played locally.
+Implemented features include:
 
-The menu layout and Options screen have been implemented and are
-awaiting validation. Options include session duration (60–180 seconds)
-and enemy spawn interval (1–15 seconds), saved in browser local
-storage. Each match receives a separate configuration snapshot.
+- Ship movement and rotation.
+- Front cannon and parallel port/starboard broadsides.
+- Chaser and Shooter enemies.
+- Arena boundaries, island collisions, damage and scoring.
+- Match completion by player death or session timeout.
+- Keyboard and on-screen pointer controls.
+- Manual pause and automatic pause on focus loss.
+- Result display, restart and abandonment without match registration.
+- Persisted gameplay options and last completed result.
+- Paginated ranking and match history.
+- Persistent submission queue with startup and manual retry.
+- Idempotent mock registration after an ambiguous timeout.
+- Asset loading failure feedback and retry.
 
-MSW and the TanStack Query provider are initialized. Ranking and
-history screens now use Axios and TanStack Query to request paginated
-mock API records, with loading, empty, error and refresh states.
+Automated checks cover options, pause, movement, combat, enemy spawning,
+Shooter damage, match lifecycle, asset failures, ranking pagination and
+submission recovery.
 
-Ranking compares matches with the same gameplay configuration.
-History displays the local player's registered matches.
-Ranking and history have been loaded and pagination has been
-checked locally.
+Remaining delivery work includes broader touch and API scenario coverage,
+visual regression baselines, performance measurements, final documentation
+review, public deployment and clean-checkout verification.
 
-Completed matches are now saved locally before submission.
-Successful submissions invalidate ranking and history queries.
-Failed submissions remain in a persistent queue, with automatic
-retry on application startup and a manual retry button.
-
-The last completed result is restored after reload. Starting another
-battle preserves earlier pending submissions. Abandoned battles
-are not submitted.
-
-Manual checks completed on October 13, 2026:
-- Recovery from a simulated offline API failure using Retry pending.
-- The recovered match remained visible after reloading, without duplication.
-- In the commit-timeout scenario, automatic retry recovered the saved
-  match and the history count increased by exactly one.
-
-These checks were performed locally in Chrome. Automated E2E coverage
-for these scenarios is still pending.
-
-Persistence currently assumes available browser local storage
-and a single active application tab.
+Browser persistence assumes available local storage and a single active
+application tab. The mock API is browser-local, not a shared backend.
 
 ## Technology stack
 
 - React and TypeScript: interface and application code.
 - Vite: development server and production build.
 - PixiJS: game rendering.
-- Axios and TanStack Query: ranking and history requests and caching.
+- Axios: HTTP requests.
+- TanStack Query: request state, caching and mutations.
 - MSW: browser-based REST API simulation.
-- Playwright: automated simulation checks and browser testing.
+- Playwright: simulation checks and browser tests.
 - ESLint: static code analysis.
 
 ## Setup
@@ -68,6 +56,11 @@ npm ci
 npx playwright install chromium
 ```
 
+No private backend or credentials are required.
+
+MSW requires localhost or HTTPS and browser service worker support.
+The mock worker starts in both development and production.
+
 ## Development
 
 ```bash
@@ -76,8 +69,6 @@ npm run dev
 
 Open the local URL printed in the terminal.
 
-No environment variables or private services are required for the current setup.
-
 ## Build and preview
 
 ```bash
@@ -85,74 +76,217 @@ npm run build
 npm run preview
 ```
 
+The build command runs TypeScript checks and creates the production output
+in `dist/`.
+
+The latest confirmed production build passed. Vite reported a warning
+about a JavaScript chunk exceeding 500 kB after minification.
+Loading and runtime performance measurements are still pending.
+
 ## Code quality
 
 ```bash
 npm run lint
 ```
 
-The build command also runs the TypeScript checks configured by the starter.
+TypeScript checks can also be run separately:
+
+```bash
+npx tsc -b
+```
+
+The latest confirmed lint execution reported zero errors and one unused
+`eslint-disable` warning in the generated `public/mockServiceWorker.js`.
+
+## Controls
+
+| Action | Keyboard |
+| --- | --- |
+| Move forward | W / Arrow Up |
+| Rotate left | A / Arrow Left |
+| Rotate right | D / Arrow Right |
+| Front cannon | Space |
+| Port broadside | Q |
+| Starboard broadside | E |
+| Pause | P / Escape |
+
+On touch devices, hold the on-screen controls to move, rotate and fire.
+
+Pausing freezes simulation time. Losing window focus also pauses the game.
+Resume explicitly through the pause dialog.
+
+Abandoning a battle returns to the menu without submitting a result.
+Reloading during combat abandons the active simulation.
+
+Mobile orientation and physical-device validation are still pending.
+Pixel 7 emulation does not replace testing on a physical device.
+
+## Gameplay configuration
+
+Balance parameters are defined in `src/config/gameConfig.ts`.
+
+| Parameter | Default | Allowed options |
+| --- | --- | --- |
+| Session duration | 120 seconds | 60–180 seconds |
+| Enemy spawn interval | 4 seconds | 1–15 seconds |
+| Logical arena size | 960 × 600 | Defined in configuration |
+| Initial player health | 100 | Defined in configuration |
+
+Time values use seconds. Movement speeds use logical units per second.
+Rotation speeds use radians per second. Distances use logical arena units.
+
+The Options screen validates and persists session duration and spawn interval.
+`makeConfig` creates a separate configuration object for each match.
+The simulation also copies its configuration.
+
+`configKey` serializes all configuration values. Ranking requests use this
+key to compare matches played with the same gameplay configuration.
+
+The spawn interval limits are a balance decision subject to further
+playtesting and performance validation.
+
+## Match persistence and API
+
+Completed matches are saved locally before submission.
+
+Successful submissions remove the acknowledged match from the pending
+queue and invalidate ranking and history queries.
+
+Failed submissions remain queued across reloads. Pending matches are
+retried on application startup or through the `Retry pending` button.
+Starting another battle preserves earlier pending submissions.
+
+Each match has a unique ID used by the mock API to prevent duplicate
+registration. In the `commit-timeout` scenario, the API stores the match
+before delaying its response. A retry returns the existing record.
+
+Ranking includes fixtures representing other players and confirmed matches
+with the selected configuration. History displays confirmed matches for
+the local player.
+
+Endpoints:
+
+- `GET /api/ranking?page=&config=&playerId=`
+- `GET /api/history?page=&playerId=`
+- `POST /api/matches`
+
+List responses contain `items`, `total`, `page` and `pageSize`.
+Pages contain up to five matches.
+
+## Mock network scenarios
+
+Set a scenario through the browser developer console:
+
+```js
+localStorage.setItem("pb:scenario", JSON.stringify("offline"));
+```
+
+Available scenarios:
+
+| Scenario | Behavior |
+| --- | --- |
+| `success` | Successful requests |
+| `empty` | Empty ranking and history responses |
+| `slow` | Delayed responses |
+| `variable` | Alternating response delays |
+| `timeout` | Delay exceeding the Axios timeout |
+| `offline` | Simulated network failure |
+| `http-400` | HTTP 400 response |
+| `http-500` | HTTP 503 response |
+| `ranking-error` | Ranking request failure |
+| `history-error` | History request failure |
+| `commit-timeout` | Match stored before a delayed response |
+| `unavailable` | HTTP 503 response |
+
+For list scenarios, select the scenario and click `Refresh`.
+For submission scenarios, select it before completing a battle.
+
+To restore successful requests:
+
+```js
+localStorage.setItem("pb:scenario", JSON.stringify("success"));
+```
+
+Then refresh the list or retry pending submissions.
+
+To reset all application persistence, run:
+
+```js
+Object.keys(localStorage)
+  .filter((key) => key.startsWith("pb:"))
+  .forEach((key) => localStorage.removeItem(key));
+
+location.reload();
+```
+
+Resetting removes saved options, results, pending submissions and confirmed
+mock matches. Ranking fixtures are generated separately.
 
 ## Automated tests
-The options and pause suite covers saving and restoring options,
-rejecting empty and out-of-range values, cancelling changes,
-and freezing the game timer during manual and focus-loss pauses.
 
-Latest local execution on October 13, 2026:
-8 tests passed across desktop Chromium and Pixel 7 emulation.
-Production build passed. ESLint reported no errors and one warning
-in the generated MSW service worker.
-
-The combat suite covers movement, rotation, arena and island boundaries,
-front cannon cooldowns, parallel broadsides, enemy damage, scoring,
-player death and restart. It also checks asset failure feedback,
-retry while unavailable and recovery after a clean reload.
-
-Latest local execution on October 13, 2026:
-10 tests passed across desktop Chromium and Pixel 7 emulation.
-
-The API recovery suite covers offline submission persistence across reload,
-manual retry without duplication, recovery after an ambiguous timeout,
-and ranking error recovery through Retry.
-
-Latest local execution on October 13, 2026:
-6 tests passed across desktop Chromium and Pixel 7 emulation.
+Run the complete suite:
 
 ```bash
 npm test
 ```
 
-Playwright starts a dedicated development server at http://127.0.0.1:5174.
+Playwright starts a dedicated development server at
+`http://127.0.0.1:5174`.
 
 The configuration includes:
 
-- Chromium with a desktop viewport.
+- Desktop Chromium at a 1280 × 900 viewport.
 - Chromium with Pixel 7 emulation.
 - HTML reports.
 - Screenshots and traces retained on failure.
+- `VITE_TEST_MODE=true` for the test server.
 
-Mobile emulation does not replace testing on a physical device.
+The game test bridge additionally requires the `?test` URL parameter.
+Combat tests use controlled setup and fixed simulation steps while
+exercising actual game rules, keyboard handlers and rendering.
 
-The browser smoke suite covers the main menu, game canvas startup,
-ranking pagination and empty history.
+### Suites and confirmed results
 
-Latest local execution on October 13, 2026:
-8 tests passed across desktop Chromium and Pixel 7 emulation.
+Results recorded locally on October 13, 2026:
 
-Broader gameplay and API recovery E2E tests, along with visual
-regression coverage, are still pending.
-The simulation tests are described below.
+| Suite | Coverage | Confirmed execution |
+| --- | --- | --- |
+| `setup.spec.ts` | Menu, canvas startup, ranking pagination and empty history | 8 passed |
+| `options-pause.spec.ts` | Save, reload, validation, cancellation and manual/focus-loss pause | 8 passed |
+| `combat.spec.ts` | Movement, weapons, damage, scoring, enemies, assets and match lifecycle | 16 passed |
+| `api-recovery.spec.ts` | Offline persistence, retry, ambiguous timeout and ranking error recovery | 6 passed |
+| `simulation.spec.ts` | Configuration isolation, pause, projectile lifetime and lethal Chaser contact | 4 passed in the desktop project |
+
+Results above describe separate suite executions, not a combined
+full-suite result.
+
+Further checks are pending for simultaneous touch input, additional
+collision and API consistency cases, and visual regression.
+
+### Run individual suites
+
+```bash
+npm test -- tests/setup.spec.ts
+npm test -- tests/options-pause.spec.ts
+npm test -- tests/combat.spec.ts
+npm test -- tests/api-recovery.spec.ts
+npm test -- tests/simulation.spec.ts --project=desktop
+```
+
+Simulation checks run directly against TypeScript rules without requesting
+a browser page. They complement browser E2E tests.
 
 ### View the latest report
 
 ```bash
-npm run test:report
+npx playwright show-report playwright-report
 ```
 
-### Update visual baselines
+### Visual baselines
 
-Once screenshot assertions are implemented, review intentional visual changes
-and update their baselines with:
+Visual screenshot assertions and versioned baselines are pending.
+
+Once implemented, review intentional visual changes before updating:
 
 ```bash
 npm run test:update
@@ -160,92 +294,51 @@ npm run test:update
 
 ### Generated output
 
-- `playwright-report/`: local HTML report.
-- `test-results/`: temporary test output, including failure artifacts.
+- `dist/`: production build output.
+- `playwright-report/`: latest local HTML report.
+- `test-results/`: temporary test output and failure artifacts.
 - `reports/`: reserved for delivery evidence and profiling results.
 
-Local test output is ignored by Git. Final delivery evidence will be
-preserved separately. The initial starter smoke test passed in desktop
-and mobile emulation. Gameplay test reports and performance measurements
-are pending.
+Generated local build and test output is ignored by Git.
+Delivery evidence will be preserved separately.
 
-## Documentation roadmap
+## Game simulation
 
-The following documentation will be added alongside implementation:
+Gameplay rules live in `src/game/simulation.ts`, independently of React
+and PixiJS.
 
-- Controls, gameplay configuration and supported mobile orientation.
-- Network scenarios, reset instructions and failure reproduction.
-- `ARCHITECTURE.md`: simulation, rendering, input, collisions, resource cleanup,
-  persistence, API contracts, cache and pending submission recovery.
-- Test and performance reports, including environment details and limitations.
-- Public deployment URL and clean-checkout verification.
+- `move()`: ship movement, arena bounds and island collision checks.
+- `spawn()`: enemy creation and safe spawn placement.
+- `fire()`: front and broadside projectile creation.
+- `segmentHit()`: swept projectile segment collision checks.
+- `update(dt)`: movement, cooldowns, spawning, enemy behavior, damage,
+  scoring, cleanup and match completion.
+- `snapshot()`: copies selected state for inspection.
 
-## Gameplay configuration
+`update(dt)` receives seconds. Paused or completed matches do not advance.
 
-Balance parameters are defined in `src/config/gameConfig.ts`.
+Input state and keyboard mappings live in `src/game/input.ts`.
+Keyboard and pointer listeners are connected through
+`src/components/Game.tsx`.
 
-- Default session duration: 120 seconds.
-- Allowed session duration: 60–180 seconds.
-- Default enemy spawn interval: 4 seconds.
-- Allowed spawn interval: 1–15 seconds.
-- Logical arena size: 960 × 600.
-- Initial player health: 100.
-
-Time values use seconds. Movement speeds use logical units per second.
-Rotation speeds use radians per second. Distances use logical arena units.
-
-The spawn interval limits are an initial balance decision, subject to
-playtesting and performance validation.
-
-`makeConfig` creates a separate configuration object for each match.
-`configKey` serializes all configuration values for ranking comparisons.
-
-The Options screen persists session duration and spawn interval.
-The playable interface passes these settings to the simulation.
-Ranking requests use the full configuration key to select
-comparable matches. The ranking integration is awaiting validation.
+PixiJS rendering and shared texture loading live in `src/game/renderer.ts`.
 
 ## Assets
 
 Game images are stored in `public/assets/`.
+
 See [ASSET_SOURCES.md](ASSET_SOURCES.md) for provenance and license notes.
 
-## Game simulation
+## Documentation and delivery
 
-Gameplay rules live in `src/game/simulation.ts`, independently
-of React and PixiJS.
+`ARCHITECTURE.md` has been drafted and requires a final review against
+the implemented code.
 
-- `move()`: ship movement, arena bounds and island collision checks.
-- `spawn()`: enemy creation and safe spawn placement.
-- `fire()`: projectile creation for frontal and lateral attacks.
-- `segmentHit()`: projectile segment collision checks.
-- `update(dt)`: movement, cooldowns, spawning, enemy behavior,
-  damage, scoring, cleanup and match completion.
-- `snapshot()`: a copy of selected simulation state for inspection.
+Remaining documentation and delivery tasks:
 
-Time is supplied to `update(dt)` in seconds. Paused or completed
-matches do not advance through this method.
-
-Input state and keyboard mappings live in `src/game/input.ts`.
-Keyboard and touch event listeners are connected through
-`src/components/Game.tsx`.
-
-Initial simulation tests passed, and the game has been played locally.
-Broader gameplay validation and browser E2E coverage are pending.
-
-## Simulation tests
-
-Run the simulation checks with:
-
-```bash
-npm test -- tests/simulation.spec.ts --project=desktop
-```
-
-The four tests cover configuration isolation, paused simulation,
-projectile lifetime and lethal Chaser collision without scoring,
-including prevention of updates after match completion.
-
-These tests run directly against the simulation, without a browser.
-They complement the upcoming browser E2E tests.
-
-Latest local execution: 4 tests passed.
+- Confirm supported mobile orientation and device limitations.
+- Review architecture, cleanup, cache and persistence documentation.
+- Record performance measurements and environment details.
+- Preserve final test and profiling evidence.
+- Publish the game and add its public URL.
+- Verify setup, build and tests from a clean checkout.
