@@ -2,10 +2,13 @@
 
 A single-player, top-down naval shooter built with React, TypeScript and PixiJS.
 
+Live game: [pirate-battle-xi.vercel.app](https://pirate-battle-xi.vercel.app/)
+
 ## Current status
 
-The game is playable locally. React manages the interface and PixiJS renders
-the arena, ships, projectiles, health bars and combat effects.
+The game is playable locally and deployed on Vercel. React manages the
+interface and PixiJS renders the arena, ships, projectiles, health bars
+and combat effects.
 
 Implemented features include:
 
@@ -34,11 +37,13 @@ intentionally skipped. Performance measurements have also been recorded.
 Installation, the normal production build and the complete test suite
 were verified in a fresh clone of the GitHub repository.
 
-Portrait and landscape layouts were manually checked in Pixel 7
-browser emulation.
+The public deployment was opened in a Chrome incognito window without
+requiring authentication. Controls, pause, match registration and history
+persistence were manually checked on the published version.
 
-Remaining delivery work includes public deployment, physical-device
-validation and the final documentation update with the public URL.
+Physical-device checks were performed on a Motorola G6 with Chrome
+and an iPhone 13 with Safari. Their confirmed results and the unresolved
+Motorola countdown issue are documented in the Controls section.
 
 Browser persistence assumes available local storage and a single active
 application tab. The mock API is browser-local, not a shared backend.
@@ -92,6 +97,16 @@ The latest confirmed normal production build passed in a clean checkout.
 Vite reported a warning about a JavaScript chunk exceeding 500 kB after
 minification.
 
+The Vercel deployment uses:
+
+- Application preset: Vite.
+- Root directory: `./`.
+- Install command: `npm ci`.
+- Build command: `npm run build`.
+- Output directory: `dist`.
+- `VITE_TEST_MODE=false`.
+- `VITE_PROFILE_MODE=false`.
+
 Runtime profiling results are documented in the Performance profiling
 section. Initial loading performance has not been measured separately.
 
@@ -141,8 +156,22 @@ during the manual waiting check.
 In landscape, the controls overlap a narrow strip at the bottom
 of the arena.
 
-Physical-device validation is pending. Browser emulation does not
-replace testing on a physical device.
+Physical-device checks on the public deployment were performed on
+October 13, 2026:
+
+| Device | Browser | Confirmed manual observations |
+| --- | --- | --- |
+| Motorola G6 | Chrome | Gameplay, portrait and landscape layouts, simultaneous movement and firing with two fingers, manual pause and resume |
+| iPhone 13 | Safari | Arena and controls displayed in portrait; the active countdown decreased from 120 to 112 seconds |
+
+On the Motorola G6, the displayed countdown was reported to remain at
+120 seconds while combat continued. Switching the page back from automatic
+Portuguese translation to English did not resolve the reported behavior.
+The cause has not been identified, and countdown behavior on this device
+remains an unresolved compatibility issue.
+
+Browser and operating system versions were not recorded for the physical
+devices. These checks do not establish compatibility with all mobile devices.
 
 ## Gameplay configuration
 
@@ -388,9 +417,14 @@ See [ASSET_SOURCES.md](ASSET_SOURCES.md) for provenance and license notes.
 
 ## Documentation and delivery
 
-`ARCHITECTURE.md` documents component responsibilities, simulation timing,
-rendering lifecycle, input, collisions, API consistency, persistence
-and profiling limitations.
+Public game: [pirate-battle-xi.vercel.app](https://pirate-battle-xi.vercel.app/)
+
+Source repository:
+[VittorioBarella/pirate-battle](https://github.com/VittorioBarella/pirate-battle)
+
+[ARCHITECTURE.md](ARCHITECTURE.md) documents component responsibilities,
+simulation timing, rendering lifecycle, input, collisions, API consistency,
+persistence and profiling limitations.
 
 Clean-checkout validation completed on October 13, 2026:
 
@@ -403,11 +437,12 @@ Clean-checkout validation completed on October 13, 2026:
   Restoring that file cleared its Git modification marker.
 - The working tree was clean after validation.
 
-Remaining documentation and delivery tasks:
+The public deployment and physical-device checks are documented above.
+The Motorola G6 countdown issue remains unresolved.
 
-- Validate the published game on a physical device and record limitations.
-- Publish the game and add its public URL.
-- Update the final delivery status.
+The preserved automated test report is available in
+`reports/playwright-final/`, and the profiling report is available in
+`reports/profile-stress.json`.
 
 ## Performance profiling
 
