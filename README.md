@@ -35,7 +35,15 @@ The last completed result is restored after reload. Starting another
 battle preserves earlier pending submissions. Abandoned battles
 are not submitted.
 
-Match submission and recovery behavior are awaiting validation.
+Manual checks completed on October 13, 2026:
+- Recovery from a simulated offline API failure using Retry pending.
+- The recovered match remained visible after reloading, without duplication.
+- In the commit-timeout scenario, automatic retry recovered the saved
+  match and the history count increased by exactly one.
+
+These checks were performed locally in Chrome. Automated E2E coverage
+for these scenarios is still pending.
+
 Persistence currently assumes available browser local storage
 and a single active application tab.
 
