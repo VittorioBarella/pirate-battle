@@ -110,11 +110,14 @@ The configuration includes:
 
 Mobile emulation does not replace testing on a physical device.
 
-The initial starter-counter smoke test is obsolete now that the
-starter screen has been replaced. It must be updated before the
-complete test suite can serve as a delivery check.
+The browser smoke suite covers the main menu, game canvas startup,
+ranking pagination and empty history.
 
-Gameplay E2E tests and visual regression coverage are pending.
+Latest local execution on October 13, 2026:
+8 tests passed across desktop Chromium and Pixel 7 emulation.
+
+Broader gameplay and API recovery E2E tests, along with visual
+regression coverage, are still pending.
 The simulation tests are described below.
 
 ### View the latest report
