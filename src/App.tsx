@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Game } from "./components/Game";
 import { Options } from "./components/Options";
 import { DataPanel } from "./components/DataPanel";
+import { useMatchSubmission } from "./hooks/useMatchSubmission";
 import {
   configKey,
   defaultOptions,
@@ -35,13 +36,43 @@ function loadOptions(): OptionsValue {
   };
 }
 
+interface PendingNoticeProps {
+  count: number;
+  isSending: boolean;
+  onRetry: () => void;
+}
+
+function PendingNotice({
+  count,
+  isSending,
+  onRetry,
+}: PendingNoticeProps) {
+  if (count === 0) return null;
+
+  return (
+    <aside className="pending" aria-label="Pending match submissions">
+      <p role="status" style={{ margin: 0 }}>
+        {isSending
+          ? `Sending saved battles… ${count} pending.`
+          : `${count} battle(s) saved locally and awaiting registration.`}
+      </p>
+      <button disabled={isSending} onClick={onRetry}>
+        Retry pending
+      </button>
+    </aside>
+  );
+}
+
 export default function App() {
   const [options, setOptions] = useState(loadOptions);
   const [showOptions, setShowOptions] = useState(false);
   const [matchConfig, setMatchConfig] = useState<GameConfig | null>(null);
-  const [result, setResult] = useState<Match | null>(null);
+  const [result, setResult] = useState<Match | null>(() =>
+    read<Match | null>("last", null),
+  );
   const [resource, setResource] = useState<"ranking" | "history">("ranking");
 
+  const { pending, isSending, submit, retryPending } = useMatchSubmission();
   const rankingConfig = configKey(makeConfig(options));
 
   const screen = matchConfig
@@ -67,6 +98,7 @@ export default function App() {
   };
 
   const finishGame = (match: Match) => {
+    submit(match);
     setResult(match);
     setMatchConfig(null);
   };
@@ -103,9 +135,20 @@ export default function App() {
   }
 
   if (result) {
+    const resultPending = pending.some((match) => match.id === result.id);
     return (
       <main className="shell">
         <section className="card result" aria-labelledby="result-title">
+                    <img
+            src="/assets/logo_jungle_gaming.svg"
+            alt="Jungle Gaming"
+            width={140}
+            style={{
+              display: "block",
+              height: "auto",
+              marginBottom: "24px",
+            }}
+          />
           <small>THE LAST TIDE</small>
           <h1 id="result-title">Battle complete</h1>
 
@@ -126,9 +169,17 @@ export default function App() {
               : "Time expired."}
           </p>
 
-          <p className="muted">
-            Match registration will be available after API integration.
+          <p role="status">
+            {resultPending
+              ? "This battle is saved locally. Registration is pending."
+              : "Battle registered successfully."}
           </p>
+
+          <PendingNotice
+            count={pending.length}
+            isSending={isSending}
+            onRetry={retryPending}
+          />
 
           <div className="actions">
             <button className="primary" onClick={startGame}>
@@ -178,6 +229,12 @@ export default function App() {
           On touch devices, hold the on-screen controls to move and fire.
         </p>
       </section>
+
+      <PendingNotice
+        count={pending.length}
+        isSending={isSending}
+        onRetry={retryPending}
+      />
 
       <nav className="actions" aria-label="Battle records">
         <button

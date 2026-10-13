@@ -23,8 +23,21 @@ mock API records, with loading, empty, error and refresh states.
 
 Ranking compares matches with the same gameplay configuration.
 History displays the local player's registered matches.
-Match submission and pending-send recovery are not yet connected
-to the interface. The new list integration is awaiting validation.
+Ranking and history have been loaded and pagination has been
+checked locally.
+
+Completed matches are now saved locally before submission.
+Successful submissions invalidate ranking and history queries.
+Failed submissions remain in a persistent queue, with automatic
+retry on application startup and a manual retry button.
+
+The last completed result is restored after reload. Starting another
+battle preserves earlier pending submissions. Abandoned battles
+are not submitted.
+
+Match submission and recovery behavior are awaiting validation.
+Persistence currently assumes available browser local storage
+and a single active application tab.
 
 ## Technology stack
 
