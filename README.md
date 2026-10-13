@@ -257,7 +257,7 @@ Results recorded locally on October 13, 2026:
 | `api-recovery.spec.ts` | Offline persistence, retry, ambiguous timeout and ranking error recovery | 6 passed |
 | `simulation.spec.ts` | Configuration isolation, pause, projectile lifetime and lethal Chaser contact |8 passed 4 checks repeated in both projects|
 | `visual.spec.ts` | Menu, initial arena and completed result screenshots | 6 passed |
-
+| `touch.spec.ts` | Simultaneous movement/fire, touch release, cancellation and independent keyboard input | 2 passed in the mobile project |
 Latest complete validation on October 13, 2026:
 46 tests passed in 2.2 minutes. Production build passed.
 ESLint reported zero errors and one warning in the generated MSW worker.
