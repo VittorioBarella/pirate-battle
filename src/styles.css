@@ -631,3 +631,14 @@ details p {
     padding: 8px;
   }
 }
+
+/* Keep space below the final panel on menu and options screens. */
+.shell {
+  padding-bottom: 48px;
+}
+
+@media (max-width: 650px) {
+  .shell {
+    padding-bottom: 32px;
+  }
+}

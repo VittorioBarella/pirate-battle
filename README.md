@@ -17,24 +17,23 @@ awaiting validation. Options include session duration (60–180 seconds)
 and enemy spawn interval (1–15 seconds), saved in browser local
 storage. Each match receives a separate configuration snapshot.
 
-MSW and the TanStack Query provider are initialized. Typed API
-contracts, Axios transport and mock handlers are implemented.
-Ranking, history, match submission and pending-send recovery
-are not yet connected to the interface.
+MSW and the TanStack Query provider are initialized. Ranking and
+history screens now use Axios and TanStack Query to request paginated
+mock API records, with loading, empty, error and refresh states.
 
-Build and lint passed before the latest menu and Options changes.
-Initial simulation tests passed. Validation of the latest changes,
-full gameplay tests, visual regression checks, performance
-measurements and public deployment are pending.
+Ranking compares matches with the same gameplay configuration.
+History displays the local player's registered matches.
+Match submission and pending-send recovery are not yet connected
+to the interface. The new list integration is awaiting validation.
 
 ## Technology stack
 
 - React and TypeScript: interface and application code.
 - Vite: development server and production build.
-- PixiJS: planned game rendering.
-- Axios and TanStack Query: planned ranking and match history integration.
-- MSW: planned REST API simulation.
-- Playwright: browser testing.
+- PixiJS: game rendering.
+- Axios and TanStack Query: ranking and history requests and caching.
+- MSW: browser-based REST API simulation.
+- Playwright: automated simulation checks and browser testing.
 - ESLint: static code analysis.
 
 ## Setup
@@ -90,8 +89,12 @@ The configuration includes:
 
 Mobile emulation does not replace testing on a physical device.
 
-The initial smoke test checks the starter counter. Gameplay tests and visual
-regression coverage will be added during implementation.
+The initial starter-counter smoke test is obsolete now that the
+starter screen has been replaced. It must be updated before the
+complete test suite can serve as a delivery check.
+
+Gameplay E2E tests and visual regression coverage are pending.
+The simulation tests are described below.
 
 ### View the latest report
 
@@ -149,8 +152,11 @@ playtesting and performance validation.
 
 `makeConfig` creates a separate configuration object for each match.
 `configKey` serializes all configuration values for ranking comparisons.
-The simulation uses this configuration. Integration with the
-playable interface and ranking is pending.
+
+The Options screen persists session duration and spawn interval.
+The playable interface passes these settings to the simulation.
+Ranking requests use the full configuration key to select
+comparable matches. The ranking integration is awaiting validation.
 
 ## Assets
 
@@ -174,10 +180,11 @@ Time is supplied to `update(dt)` in seconds. Paused or completed
 matches do not advance through this method.
 
 Input state and keyboard mappings live in `src/game/input.ts`.
-Keyboard and touch event listeners will be connected during
-game integration.
+Keyboard and touch event listeners are connected through
+`src/components/Game.tsx`.
 
-Gameplay behavior still requires automated tests and playtesting.
+Initial simulation tests passed, and the game has been played locally.
+Broader gameplay validation and browser E2E coverage are pending.
 
 ## Simulation tests
 

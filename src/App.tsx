@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import { Game } from "./components/Game";
 import { Options } from "./components/Options";
-import { defaultOptions, makeConfig } from "./config/gameConfig";
+import { DataPanel } from "./components/DataPanel";
+import {
+  configKey,
+  defaultOptions,
+  makeConfig,
+} from "./config/gameConfig";
 import type { GameConfig } from "./config/gameConfig";
 import type { Match } from "./api/contracts";
 import { read, write } from "./api/storage";
@@ -35,6 +40,9 @@ export default function App() {
   const [showOptions, setShowOptions] = useState(false);
   const [matchConfig, setMatchConfig] = useState<GameConfig | null>(null);
   const [result, setResult] = useState<Match | null>(null);
+  const [resource, setResource] = useState<"ranking" | "history">("ranking");
+
+  const rankingConfig = configKey(makeConfig(options));
 
   const screen = matchConfig
     ? "game"
@@ -170,6 +178,31 @@ export default function App() {
           On touch devices, hold the on-screen controls to move and fire.
         </p>
       </section>
+
+      <nav className="actions" aria-label="Battle records">
+        <button
+          type="button"
+          className={resource === "ranking" ? "primary" : "quiet"}
+          aria-pressed={resource === "ranking"}
+          onClick={() => setResource("ranking")}
+        >
+          Ranking
+        </button>
+        <button
+          type="button"
+          className={resource === "history" ? "primary" : "quiet"}
+          aria-pressed={resource === "history"}
+          onClick={() => setResource("history")}
+        >
+          History
+        </button>
+      </nav>
+
+      <DataPanel
+        key={`${resource}:${rankingConfig}`}
+        resource={resource}
+        config={rankingConfig}
+      />
     </main>
   );
 }
