@@ -255,10 +255,12 @@ Results recorded locally on October 13, 2026:
 | `options-pause.spec.ts` | Save, reload, validation, cancellation and manual/focus-loss pause | 8 passed |
 | `combat.spec.ts` | Movement, weapons, damage, scoring, enemies, assets and match lifecycle | 16 passed |
 | `api-recovery.spec.ts` | Offline persistence, retry, ambiguous timeout and ranking error recovery | 6 passed |
-| `simulation.spec.ts` | Configuration isolation, pause, projectile lifetime and lethal Chaser contact | 4 passed in the desktop project |
+| `simulation.spec.ts` | Configuration isolation, pause, projectile lifetime and lethal Chaser contact |8 passed 4 checks repeated in both projects|
+| `visual.spec.ts` | Menu, initial arena and completed result screenshots | 6 passed |
 
-Results above describe separate suite executions, not a combined
-full-suite result.
+Latest complete validation on October 13, 2026:
+46 tests passed in 2.2 minutes. Production build passed.
+ESLint reported zero errors and one warning in the generated MSW worker.
 
 Further checks are pending for simultaneous touch input, additional
 collision and API consistency cases, and visual regression.
@@ -284,13 +286,28 @@ npx playwright show-report playwright-report
 
 ### Visual baselines
 
-Visual screenshot assertions and versioned baselines are pending.
+Versioned screenshots cover the menu, initial arena and completed result
+in desktop Chromium and Pixel 7 emulation.
 
-Once implemented, review intentional visual changes before updating:
+Baselines are stored in `tests/visual.spec.ts-snapshots/`.
+The current images were generated on Windows; rendering can differ across
+operating systems and browser versions.
+
+Ranking dates are masked to avoid timezone-dependent screenshot differences.
+
+Run visual comparisons with:
 
 ```bash
-npm run test:update
+npm test -- tests/visual.spec.ts
 ```
+
+Review intentional layout changes before updating baselines:
+
+```bash
+npm test -- tests/visual.spec.ts --update-snapshots
+```
+
+Latest local execution on October 13, 2026: 6 tests passed.
 
 ### Generated output
 
