@@ -1,0 +1,633 @@
+:root {
+  font-family:
+    Inter,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    "Segoe UI",
+    sans-serif;
+  color: #e9f1ed;
+  background: #071e2b;
+  font-synthesis: none;
+  line-height: 1.55;
+  color-scheme: dark;
+}
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+}
+button,
+input,
+select {
+  font: inherit;
+}
+button,
+a,
+input,
+select,
+summary {
+  -webkit-tap-highlight-color: transparent;
+}
+button {
+  cursor: pointer;
+  border: 1px solid #42606b;
+  background: #123340;
+  color: #ecf4ee;
+  border-radius: 7px;
+  padding: 11px 21px;
+  font-weight: 650;
+  min-height: 44px;
+}
+button:hover {
+  background: #214b58;
+}
+button:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+summary:focus-visible {
+  outline: 3px solid #efbe70;
+  outline-offset: 4px;
+}
+h1:focus,
+h2:focus {
+  outline: none;
+}
+button.primary {
+  background: #ebba6f;
+  color: #152b32;
+  border-color: #ebba6f;
+}
+button.primary:hover {
+  background: #ffce84;
+}
+.quiet {
+  background: transparent;
+}
+input,
+select {
+  display: block;
+  background: #0b2937;
+  border: 1px solid #52727c;
+  border-radius: 6px;
+  color: #f2f6f0;
+  padding: 11px;
+  width: 100%;
+  margin-top: 7px;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+h1,
+h2,
+p {
+  margin: 0 0 16px;
+}
+small,
+.eyebrow {
+  font-size: 11px;
+  letter-spacing: 0.15em;
+}
+.shell {
+  max-width: 1120px;
+  margin: auto;
+  padding: 0 32px;
+}
+.site-header {
+  height: 92px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid #24404b;
+  gap: 20px;
+  font-weight: 750;
+  letter-spacing: 0.12em;
+  font-size: 13px;
+}
+.brand-mark {
+  font-size: 28px;
+  margin-right: 10px;
+  color: #ebba6f;
+}
+.edition,
+.muted {
+  color: #a8bdc3;
+}
+.edition {
+  font-size: 10px;
+  letter-spacing: 0.15em;
+}
+.hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  padding: 55px 0 35px;
+  gap: 28px;
+  align-items: center;
+}
+.eyebrow {
+  color: #ebba6f;
+  font-weight: 750;
+  display: block;
+  margin-bottom: 18px;
+}
+.hero h1 {
+  font-family: Georgia, serif;
+  font-size: clamp(40px, 5.2vw, 64px);
+  line-height: 1.04;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+.hero em {
+  color: #ebba6f;
+  font-style: normal;
+}
+.hero-copy > p {
+  color: #b4c9ce;
+}
+.captain-label {
+  display: block;
+  max-width: 290px;
+  font-size: 12px;
+}
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 23px 0;
+}
+.actions .primary {
+  min-width: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.hero-art {
+  height: 390px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: radial-gradient(
+    ellipse,
+    #295b68 0%,
+    #133642 43%,
+    transparent 69%
+  );
+}
+.compass-ring {
+  position: absolute;
+  width: 330px;
+  height: 330px;
+  border-radius: 50%;
+  border: 1px solid #62848c66;
+  outline: 1px solid #62848c44;
+  outline-offset: 17px;
+  background: repeating-conic-gradient(
+    from 0deg,
+    #87a8a022 0deg 1deg,
+    transparent 1deg 30deg
+  );
+  mask: radial-gradient(transparent 63%, #000 64%);
+}
+.hero-ship {
+  width: 118px;
+  transform: rotate(32deg);
+  filter: drop-shadow(-18px 35px 15px #001c2677);
+}
+.chart-label {
+  position: absolute;
+  bottom: 0;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: #9ebcc3;
+}
+.instructions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid #2b4852;
+  border-bottom: 1px solid #2b4852;
+  padding: 20px 0;
+  gap: 25px;
+}
+.instructions strong {
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: #ebba6f;
+}
+.instructions p {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: #bad0d5;
+}
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin: 32px 0 20px;
+}
+.tabs button {
+  background: transparent;
+  border-color: transparent;
+  border-radius: 0;
+  padding-left: 0;
+  padding-right: 25px;
+}
+.tabs button[aria-selected="true"] {
+  color: #ebba6f;
+  border-bottom: 2px solid #ebba6f;
+}
+.data-panel {
+  padding: 22px;
+  border: 1px solid #2b4852;
+  background: #0c2836;
+  border-radius: 10px;
+}
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+}
+.panel-heading h2 {
+  font-family: Georgia, serif;
+  font-size: 26px;
+  margin: 0;
+}
+.data-panel .muted {
+  font-size: 12px;
+  margin: 12px 0;
+}
+.table-wrap {
+  overflow: auto;
+}
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 13px;
+  text-align: left;
+}
+th {
+  font-size: 10px;
+  color: #b3c8cd;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 13px 10px;
+}
+td {
+  padding: 13px 10px;
+  border-top: 1px solid #2b4852;
+}
+.pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  gap: 10px;
+  margin-top: 18px;
+}
+.pagination button {
+  padding: 8px 12px;
+}
+footer {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 28px 0 40px;
+  color: #9eb6bd;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+}
+details {
+  max-width: 300px;
+}
+summary {
+  cursor: pointer;
+  min-height: 35px;
+}
+details button {
+  margin-top: 10px;
+}
+details p {
+  margin-top: 10px;
+}
+.card {
+  max-width: 600px;
+  margin: 55px auto;
+  background: #0c2836;
+  padding: 35px;
+  border: 1px solid #34525d;
+  border-radius: 12px;
+}
+.card h1,
+.result h1 {
+  font-family: Georgia, serif;
+  font-size: 42px;
+}
+.options label {
+  display: block;
+  margin-top: 22px;
+}
+.options .muted {
+  font-size: 12px;
+  margin-top: 8px;
+}
+[role="alert"] {
+  color: #ffc19f;
+}
+.result {
+  text-align: center;
+  max-width: 700px;
+  margin: 65px auto;
+}
+.result .actions {
+  justify-content: center;
+}
+.result-stats {
+  display: flex;
+  gap: 50px;
+  justify-content: center;
+  margin: 25px 0;
+}
+.result-stats b {
+  display: block;
+  color: #ebba6f;
+  font-size: 46px;
+}
+.result-stats span {
+  font-size: 12px;
+  color: #b4cad0;
+}
+.pending {
+  padding: 16px;
+  background: #193c48;
+  border: 1px solid #bd925c;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 13px;
+}
+.combat {
+  max-width: 1024px;
+  margin: auto;
+  padding: 14px 24px;
+}
+.battle-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+.battle-header h1 {
+  font-family: Georgia, serif;
+  font-size: 24px;
+  margin: 0;
+}
+.battle-header small {
+  color: #ebba6f;
+}
+.hud {
+  display: flex;
+  gap: 25px;
+  font-size: 12px;
+}
+.hud b {
+  display: block;
+  font-size: 22px;
+  color: #ebba6f;
+}
+.arena-wrap {
+  position: relative;
+  border: 1px solid #51727d;
+  border-radius: 9px;
+  overflow: hidden;
+  background: #123d50;
+  min-height: 200px;
+}
+.arena {
+  width: 100%;
+  aspect-ratio: 960/600;
+}
+.arena canvas {
+  display: block;
+  max-width: 100%;
+}
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: #061b2ddb;
+  display: grid;
+  place-items: center;
+  text-align: center;
+  padding: 12px;
+}
+.dialog {
+  background: #102e3c;
+  padding: 22px;
+  border: 1px solid #6d8990;
+  border-radius: 9px;
+  max-width: 430px;
+}
+.dialog h2 {
+  font-family: Georgia, serif;
+  font-size: 32px;
+}
+.dialog button {
+  margin: 5px;
+}
+.dialog .muted {
+  font-size: 12px;
+  margin-top: 15px;
+}
+.touch-controls {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  margin: 14px 0;
+  touch-action: none;
+  user-select: none;
+}
+.touch-controls button {
+  flex: 1;
+  padding: 12px 5px;
+  touch-action: none;
+  font-size: 13px;
+  min-height: 54px;
+}
+.touch-controls button:active {
+  background: #c28e48;
+  color: #071e2b;
+}
+.control-note {
+  text-align: center;
+  font-size: 12px;
+  color: #b5cad0;
+}
+.legend {
+  font-size: 11px;
+  color: #9eb9c2;
+}
+@media (max-width: 650px) {
+  .shell {
+    padding: 0 18px;
+  }
+  .site-header {
+    height: 70px;
+  }
+  .edition {
+    display: none;
+  }
+  .hero {
+    grid-template-columns: 1fr;
+    padding: 35px 0 25px;
+    gap: 0;
+  }
+  .hero h1 {
+    font-size: 47px;
+  }
+  .hero-art {
+    height: 230px;
+    grid-row: 1;
+  }
+  .hero-ship {
+    width: 65px;
+  }
+  .compass-ring {
+    width: 190px;
+    height: 190px;
+  }
+  .chart-label {
+    font-size: 8px;
+  }
+  .hero-copy {
+    margin-top: 20px;
+  }
+  .instructions {
+    gap: 12px;
+  }
+  .instructions p {
+    font-size: 11px;
+  }
+  .instructions strong {
+    font-size: 9px;
+  }
+  .data-panel {
+    padding: 14px;
+  }
+  .panel-heading h2 {
+    font-size: 23px;
+  }
+  .card {
+    padding: 22px;
+    margin: 30px auto;
+  }
+  .pending {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .combat {
+    padding: 10px 8px;
+  }
+  .hud {
+    gap: 10px;
+  }
+  .battle-header h1 {
+    font-size: 18px;
+  }
+  .battle-header button {
+    padding: 8px 12px;
+  }
+  .hud b {
+    font-size: 18px;
+  }
+  .hud span {
+    font-size: 10px;
+  }
+  .touch-controls {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .touch-controls button {
+    min-height: 52px;
+  }
+  .dialog h2 {
+    font-size: 22px;
+  }
+  .dialog p {
+    font-size: 12px;
+    margin-bottom: 8px;
+  }
+  .dialog {
+    padding: 14px;
+  }
+  .result h1 {
+    font-size: 34px;
+  }
+  .result-stats {
+    gap: 25px;
+  }
+  footer {
+    font-size: 9px;
+  }
+}
+@media (max-height: 550px) and (orientation: landscape) {
+  .combat {
+    max-width: 640px;
+    padding: 5px 8px;
+  }
+  .battle-header {
+    margin-bottom: 5px;
+  }
+  .arena-wrap {
+    max-width: 560px;
+    margin: auto;
+  }
+  .arena {
+    aspect-ratio: 960/600;
+  }
+  .touch-controls {
+    position: fixed;
+    bottom: 8px;
+    left: 8px;
+    right: 8px;
+    opacity: 0.88;
+    z-index: 2;
+  }
+  .control-note {
+    display: none;
+  }
+}
+@media (max-height: 550px) and (orientation: landscape) {
+  .arena-wrap {
+    width: min(100%, calc((100dvh - 120px) * 1.6));
+  }
+  .touch-controls {
+    margin: 0;
+  }
+  .overlay .dialog {
+    padding: 8px;
+  }
+  .dialog small,
+  .dialog .muted {
+    display: none;
+  }
+  .dialog h2 {
+    font-size: 18px;
+    margin: 0;
+  }
+  .dialog p {
+    font-size: 11px;
+  }
+  .dialog button {
+    padding: 8px;
+  }
+}
